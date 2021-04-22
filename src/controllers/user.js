@@ -40,40 +40,40 @@ exports.createUser = async (req, res) => {
 }
 
 exports.deleteUser = async (req, res) => {
-  const {id} = req.params;
-  
-  try {
-    const user = await User.findOne({
-      where: {
-        id
-      }
-    });
+    const {id} = req.params;
 
-    if (user) {
-      await User.destroy({
+    try {
+      const user = await User.findOne({
         where: {
           id
         }
-      })
+      });
 
-      return res.status(200).send({
-        status: "success",
-        message: "delete success",
-        data: {
-          id: 1
-        }
-      })
-    }
-    res.status(404).send({
-      status: "failed",
-      message: "no data found"
-  })
-
-  } catch (error) {
-    console.log(error);
-        res.status(500).send({
-            status: "failed",
-            message: "server error"
+      if (user) {
+        await User.destroy({
+          where: {
+            id
+          }
         })
-  }
+
+        return res.status(200).send({
+          status: "success",
+          message: "delete success",
+          data: {
+            id: 1
+          }
+        })
+      }
+      res.status(404).send({
+        status: "failed",
+        message: "no data found"
+    })
+
+    } catch (error) {
+      console.log(error);
+          res.status(500).send({
+              status: "failed",
+              message: "server error"
+          })
+    }
 }
