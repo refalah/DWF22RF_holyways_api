@@ -21,6 +21,7 @@ exports.getUsers = async (req, res) => {
 exports.createUser = async (req, res) => {
     try {
         const user = await User.create(req.body);
+        
         res.status(200).send({
             status: "success",
             data: {
