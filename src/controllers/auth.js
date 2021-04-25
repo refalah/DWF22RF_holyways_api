@@ -2,13 +2,9 @@ const {User} = require('../../models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
-
-
-const handleErrors = (err) => {
-    let msgError = err.message;
-
-    return msgError;
-}
+require('dotenv').config();
+//const dotenv = require('dotenv');
+// dotenv.config({path: '../../.env'});
 
 exports.register = async (req, res) => {
 
@@ -44,7 +40,7 @@ exports.register = async (req, res) => {
         });
 
         if (checkEmail) {
-            return res.send({
+            return res.status(400).send({
                 status: "Failed",
                 message: "Email already exists",
             });
@@ -56,17 +52,77 @@ exports.register = async (req, res) => {
         res.status(201).json(user);
         
     } catch (err) {
-        // const errors = handleErrors(err);
-        // res.status(400).json(errors);
-        res.status(400).send([err.message])
+        console.log(err);
+        res.status(400).send({
+            status: "failed",
+            message: "Something went wrong"
+        })
     }
 }
 
 exports.login = async (req, res) => {
 
+    const {email, password} = req.body;
+
     try {
-        
+        const schema = Joi.object({
+           
+            email: Joi.string().required()
+            .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }),
+
+            password: Joi.string().required()
+
+           
+        });
+
+        const value = await schema.validateAsync(req.body);
+
+
+        if (!value) {
+            return res.send(value);
+        }
+
+        const checkEmail = await User.findOne({
+            where: {
+                email
+            }
+        });
+
+        if (!checkEmail) {
+            return res.status(400).send({
+                status: "Failed",
+                message: "Email does not exist",
+            });
+        }
+
+        const passVerify = await bcrypt.compare(password, checkEmail.password);
+
+        if(!passVerify){
+            return res.status(400).send({
+                status: "Failed",
+                message: "Wrong password"
+            });
+        }
+
+        const token = jwt.sign({id: checkEmail.id}, process.env.JWT_SECRET);
+
+        res.status(201).send({
+            status: "success",
+            data: {
+              user: {
+                fullName: checkEmail.fullName,
+                email: checkEmail.email,
+                token
+              }
+            }
+        });
+
+
     } catch (error) {
-        
+        console.log(error);
+        res.status(400).send({
+            status: "failed",
+            message: "Something went wrong"
+        })
     }
 }
