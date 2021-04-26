@@ -15,7 +15,6 @@ exports.register = async (req, res) => {
 
         const schema = Joi.object({
             fullName: Joi.string()
-            .alphanum()
             .min(3)
             .max(30)
             .required(),
