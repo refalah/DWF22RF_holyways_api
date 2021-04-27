@@ -23,13 +23,13 @@ router.get("/donations", getDonate);
 //Fund
 const { createFund, getFund, deleteFund, editFund, updateDonate } = require('../controllers/fund');
 const { uploadFile } = require('../middlewares/uploadFile');
-router.post("/fund", createFund);
+router.post("/fund", uploadFile("imageFile"), createFund);
 router.patch("/fund/:id", editFund);
 router.patch("/fund/:id/:id2", updateDonate);
 router.get("/funds", getFund);
 router.delete("/fund/:id", deleteFund);
 
-const {test} = require('../controllers/fund')
-router.post("/test", uploadFile('image'), test);
+// const {test} = require('../controllers/fund')
+// router.post("/test", uploadFile('image'), test);
 
 module.exports = router;

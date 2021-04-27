@@ -1,16 +1,19 @@
 const {Fund, User, Donate} = require('../../models');
+require('dotenv').config();
 
 exports.createFund = async (req, res) => {
     const {userId, title, thumbnail, goal, description} = req.body;
-
-    
-
+    //const data = req.body;
     try {
         const user = await User.findOne({where: {id: userId}});
+
+        const path = process.env.PATH_KEY;
+        const thumbnail = req.files.imageFile[0].filename;
+
         const fund = await Fund.create({title, thumbnail, goal, description, userId: user.id});
 
-        const image = req.files;
-        console.log(image);
+        // const image = req.files;
+        // console.log(image);
 
         // res.status(200).send({
         //     status: "success",
@@ -159,19 +162,19 @@ exports.deleteFund = async (req, res) => {
 }
 
 
-exports.test = async (req, res) => {
+// exports.test = async (req, res) => {
 
     
 
-    try {
-        console.log(req.files)
-        res.send("Success")
+//     try {
+//         console.log(req.files)
+//         res.send("Success")
 
-    } catch (error) {
-        console.log(error)
-        res.status(500).send({
-            status: "failed",
-            message: "something went wrong"
-        })
-    }
-}
+//     } catch (error) {
+//         console.log(error)
+//         res.status(500).send({
+//             status: "failed",
+//             message: "something went wrong"
+//         })
+//     }
+// }
